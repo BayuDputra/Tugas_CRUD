@@ -1,36 +1,47 @@
 <?php
+// Alamat server database (biasanya localhost)
 $host = "localhost";
+// Username MySQL
 $user ="root";
+// Password MySQL (kosong jika default XAMPP)
 $pass ="";
+// Nama database yang digunakan
 $db ="tugas_crud";
 
+// Membuat koneksi ke database MySQL
 $koneksi = mysqli_connect($host, $user, $pass, $db);
 if (!$koneksi) {
-    die ("Tidak Bisa Terhubung Ke Database");
+    die ("Tidak Bisa Terhubung Ke Database"); // Jika koneksi gagal, hentikan program dan tampilkan pesan
 }
+
+// Variabel untuk menampung input dari form
 $nama_karyawan      ="";
 $jenis_kelamin      ="";
 $divisi_karyawan    ="";
 $position           ="";
+// Variabel untuk menampilkan pesan sukses atau error
 $sukses             ="";
 $error              ="";
 
+// Mengecek apakah tombol Simpan ditekan
 if (isset($_POST['simpan'])){
+    // Mengambil value input dari form dengan metode POST
     $nama_karyawan      = $_POST['nama_karyawan'];
     $jenis_kelamin      = $_POST['jenis_kelamin'];
     $divisi_karyawan    = $_POST['divisi_karyawan'];
     $position           = $_POST['position'];
 
-    if ($nama_karyawan && $jenis_kelamin && $divisi_karyawan && $position){
+    if ($nama_karyawan && $jenis_kelamin && $divisi_karyawan && $position){ // Mengecek apakah semua field sudah diisi
+ // Query SQL untuk memasukkan data baru ke tabel karyawan
         $sql1 = "insert into karyawan (nama_karyawan,jenis_kelamin,divisi_karyawan,position) values ('$nama_karyawan','$jenis_kelamin','$divisi_karyawan','$position')";
-        $q1 = mysqli_query($koneksi,$sql1);
+        $q1 = mysqli_query($koneksi,$sql1); // Menjalankan query insert
         if ($q1){
-            $sukses = "Data Berhasil Disimpan";
+            $sukses = "Data Berhasil Disimpan"; // Jika query berhasil, tampilkan pesan sukses
         } else{
-            $error = "Gagal Memasukkan Data";
+            $error = "Gagal Memasukkan Data"; // Jika query gagal, tampilkan pesan error
         }
     } else{
-        $error  = "Mohon Mengisi Semua Data";
+        $error  = "Mohon Mengisi Semua Data"; // Menampilkan error jika ada kolom yang kosong
     }
 }
 ?>
@@ -55,6 +66,7 @@ if (isset($_POST['simpan'])){
     <center><b> Data Karyawan Sinarmas</b></center>
   </div>
   <div class="card-body">
+<!-- Menampilkan Pesan Error/Sukses -->
     <?php
         if ($error){ ?>
         <div class="alert alert-danger" role="alert">
@@ -77,14 +89,14 @@ if (isset($_POST['simpan'])){
         <div class="mb-3 row">
   <label for="nama_karyawan" class="col-sm-2 col-form-label">Nama</label>
   <div class="col-sm-10">
-    <input type="text" class="form-control" id="nama_karyawan" name="nama_karyawan" value="<?php echo $nama_karyawan?>">
+    <input type="text" class="form-control" id="nama_karyawan" name="nama_karyawan" value="<?php echo $nama_karyawan?>"> <!-- Input field untuk memasukkan nama karyawan -->
   </div>
 </div>
 
     <div class="mb-3 row">
   <label for="jenis_kelamin" class="col-sm-2 col-form-label">Jenis Kelamin</label>
   <div class="col-sm-10">
-    <select class="form-control" id="jenis_kelamin" name="jenis_kelamin">
+    <select class="form-control" id="jenis_kelamin" name="jenis_kelamin"> <!-- Dropdown untuk memilih jenis kelamin -->
         <option value="">- Pilih Jenis Kelamin -</option>
         <option value="L">Laki-Laki</option>
         <option value="P">Perempuan</option>
@@ -136,10 +148,11 @@ if (isset($_POST['simpan'])){
             </tr>
             <tbody>
                 <?php
-                $sql2 ="SELECT *FROM karyawan ORDER BY id_karyawan desc";
-                $sq2 = mysqli_query($koneksi, $sql2);
-                $urut = 1;
-                while ($r2= mysqli_fetch_array($sq2)) {
+                $sql2 ="SELECT *FROM karyawan ORDER BY id_karyawan desc"; // Query mengambil semua data karyawan, urut dari yang terbaru
+                $sq2 = mysqli_query($koneksi, $sql2); // Menjalankan query select
+                $urut = 1; // Variabel untuk nomor urut tabel
+                while ($r2= mysqli_fetch_array($sq2)) { // Mengambil setiap baris data dari hasil query
+                    // Menyimpan data dari setiap kolom tabel ke variabel
                     $id_karyawan        =$r2 ['id_karyawan'];
                     $nama_karyawan      =$r2 ['nama_karyawan'];
                     $jenis_kelamin      =$r2 ['jenis_kelamin'];
@@ -155,7 +168,9 @@ if (isset($_POST['simpan'])){
                    <td scope="row"><?php echo $position ?></td>
                    <td scope="row"><?php echo $nama_karyawan ?>
                    <td scope="row">
+                    <!-- Tombol Edit: mengarahkan ke halaman index dengan parameter op=edit -->
                         <a href="index.php?op=edit&id_karyawan=<?php echo $id_karyawan ?>"><button type="button" class="btn btn-warning">Edit</button></a>
+                    <!-- Tombol Delete: menghapus data dengan konfirmasi popup -->    
                         <a href="index.php?op=delete&id_karyawan=<?php echo $id_karyawan ?>" onclick="return confirm('Apakah Yakin Ingin Menghapus Data ?')"><button type="button" class="btn btn-danger">Delete</button></a>
                     </td>
                 </tr>
